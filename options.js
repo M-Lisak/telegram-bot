@@ -16,5 +16,49 @@ module.exports = {
                 [{text: 'Играть еще раз', callback_data: '/again' }],
             ]
         })
-    }
+    },
+
+    inline_buttons: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{text: 'Авторизоваться', callback_data: 'auth'}],
+                [{text: 'Получить отчёт', callback_data: 'getReport'}],
+            ]
+        })
+    },
+
+    try_again: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{text: 'Попробовать ещё раз', callback_data: 'getReport'}],
+            ]
+        })
+    },
+
+    select_date: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{text: 'За день', callback_data: 'getReportDay'}],
+                [{text: 'За неделю', callback_data: 'getReportWeek'}],
+                [{text: 'За месяц', callback_data: 'getReportMonth'}],
+                [{text: 'Ввести дату', callback_data: 'getReportInputDate'}],
+            ]
+        })
+    },
+
+    auth_inline: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{text: 'Авторизоваться', callback_data: 'auth'}],
+            ]
+        })
+    },
+
+    get_report_button: {
+        reply_markup: JSON.stringify({
+            inline_keyboard: [
+                [{text: 'Получить отчёт', callback_data: 'getReport'}],
+            ]
+        })
+    },
 }
