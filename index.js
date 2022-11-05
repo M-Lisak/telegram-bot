@@ -13,6 +13,7 @@ const bot = new TelegramApi(token, {polling: true})
 
 const getReport = async (chatId, dateTo, dateFrom) => {
     const user = await UserModel.findOne({chatId}) || {}
+    console.log("user", JSON.stringify(user, null, '\t'))
     const key = user?.key_API/*  'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm' */
     const limit = 99999
     var allSum = {
