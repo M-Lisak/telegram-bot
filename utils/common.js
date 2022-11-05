@@ -35,31 +35,31 @@ const getCountDelivery = (data) => {
 const getSummDelivery = (data) => {
     if(isEmptyObject(data)) return 0
 
-    return data.reduce((sum, prev) => sum + prev?.delivery_amount * prev?.delivery_rub, 0)
+    return data.reduce((sum, prev) => sum + prev.delivery_amount * prev.delivery_rub, 0)
 }
 
 const getCountReturn = (data) => {
     if(isEmptyObject(data)) return 0
 
-    return data.reduce((sum, prev) => sum + prev?.return_amount, 0)
+    return data.reduce((sum, prev) => sum + prev.return_amount, 0)
 }
 
 const getSummReturnCost = (data) => {
     if(isEmptyObject(data)) return 0
 
-    return data.reduce((sum, prev) => sum + prev?.return_amount * prev?.delivery_rub, 0)
+    return data.reduce((sum, prev) => sum + prev.return_amount * prev.delivery_rub, 0)
 }
 
 const getSummPenalties = (data) => {
     if(isEmptyObject(data)) return 0
 
-    return data.reduce((sum, prev) => sum + prev?.penalty, 0)
+    return data.reduce((sum, prev) => sum + prev.penalty, 0)
 }
 
 const getAdditionalPayment = (data) => {
     if(isEmptyObject(data)) return 0
 
-    return data.reduce((sum, prev) => sum + prev?.additional_payment, 0)
+    return data.reduce((sum, prev) => sum + prev.additional_payment, 0)
 }
 
 const buidlHeader = (sum) => {
