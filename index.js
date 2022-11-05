@@ -14,7 +14,7 @@ const bot = new TelegramApi(token, {polling: true})
 const getReport = async (chatId, dateTo, dateFrom) => {
     const user = await UserModel.findOne({chatId}) || {}
     console.log("user", JSON.stringify(user, null, '\t'))
-    const key = /* user?.key_API */ 'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
+    const key = user.key_API //'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
     const limit = 99999
     var allSum = {
         count: 0,
@@ -109,14 +109,14 @@ const getReport = async (chatId, dateTo, dateFrom) => {
                                             }
                                         })
         }))
-        const table1 = calculationsData.find(elem => Object.keys(elem) == 'Продажа')?.['Продажа']
-        const table2 = calculationsData.find(elem => Object.keys(elem) == 'Корректная продажа')?.['Корректная продажа']
-        const table3 = calculationsData.find(elem => Object.keys(elem) == 'Сторно продаж')?.['Сторно продаж']
-        const table4 = calculationsData.find(elem => Object.keys(elem) == 'Логистика')?.['Логистика']
-        const table5 = calculationsData.find(elem => Object.keys(elem) == 'Логистика сторно')?.['Логистика сторно']
-        const table6 = calculationsData.find(elem => Object.keys(elem) == 'Возврат')?.['Возврат']
-        const table7 = calculationsData.find(elem => Object.keys(elem) == 'Штрафы')?.['Штрафы']
-        const table8 = calculationsData.find(elem => Object.keys(elem) == 'Оплата брака')?.['Оплата брака']
+        const table1 = calculationsData.find(elem => Object.keys(elem) == 'Продажа')['Продажа']
+        const table2 = calculationsData.find(elem => Object.keys(elem) == 'Корректная продажа')['Корректная продажа']
+        const table3 = calculationsData.find(elem => Object.keys(elem) == 'Сторно продаж')['Сторно продаж']
+        const table4 = calculationsData.find(elem => Object.keys(elem) == 'Логистика')['Логистика']
+        const table5 = calculationsData.find(elem => Object.keys(elem) == 'Логистика сторно')['Логистика сторно']
+        const table6 = calculationsData.find(elem => Object.keys(elem) == 'Возврат')['Возврат']
+        const table7 = calculationsData.find(elem => Object.keys(elem) == 'Штрафы')['Штрафы']
+        const table8 = calculationsData.find(elem => Object.keys(elem) == 'Оплата брака')['Оплата брака']
 
         const selling = getSelling(table1)
         const toPay = getToPay(table1)
@@ -146,7 +146,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
         const toBePaidMinusTheCommission = toPay + toPayCorrectSale - toPayReversal - summToPayReturn + summRejects
         // const itCameMinusLogisticsAndRefunds =  toBePaidMinusTheCommission - summDelivery - summReturnCost + summStornoDelivery + summStornoReturn - summPenalties - 'AX4'
         // const ax = 
-        const additionalPayment = getAdditionalPayment(calculationsData.find(elem => Object.keys(elem) == 'Доплаты')?.['Доплаты'])
+        const additionalPayment = getAdditionalPayment(calculationsData.find(elem => Object.keys(elem) == 'Доплаты')['Доплаты'])
 
         const U = summDelivery / (countDelivery - countStornoDelivery) || 0
         const P = countDelivery - countStornoDelivery
@@ -208,8 +208,8 @@ const getReport = async (chatId, dateTo, dateFrom) => {
         // console.log("fff", dataNm_id)
         return [
             {v: unique, t: 'n', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
-            {v: dataNm_id?.[0]?.barcode, t: 'n', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
-            {v: dataNm_id?.[0]?.sa_name, t: 's', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
+            {v: dataNm_id[0].barcode, t: 'n', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
+            {v: dataNm_id[0].sa_name, t: 's', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
 
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
             {v: Math.floor(0), t: 'n', s: { font: { bold: true }, alignment: { horizontal: 'center' } }},
@@ -371,7 +371,7 @@ const start = async () => {
     ])
 
     bot.on('message', async msg => {
-        const text = msg?.text;
+        const text = msg.text;
         const chatId = msg.chat.id;
 
         try {
@@ -388,7 +388,7 @@ const start = async () => {
             console.log("info", info)
                
                 // const user = await UserModel.findOne({chatId})
-                // return bot.sendMessage(chatId, `Тебя зовут ${msg.from.first_name} ${msg.from.last_name}, в игре у тебя правильных ответов ${user.right}, неправильных ${user.wrong}, API ${user?.key_API}`);
+                // return bot.sendMessage(chatId, `Тебя зовут ${msg.from.first_name} ${msg.from.last_name}, в игре у тебя правильных ответов ${user.right}, неправильных ${user.wrong}, API ${user.key_API}`);
             }
             // return bot.sendMessage(chatId, 'Я тебя не понимаю, попробуй еще раз!)');
         } catch (e) {
@@ -542,7 +542,7 @@ async function viewCal(year, month, chatId, cbq_id = null, message_id = null) {
       )
     } else {
       // направим сообщение в чат
-      return await  bot.sendMessage(chatId, `${data?.text}`, {reply_markup: data.reply_markup});
+      return await  bot.sendMessage(chatId, `${data.text}`, {reply_markup: data.reply_markup});
     //   return {text: 'sendMessage', data: data}
     }
 }
@@ -599,7 +599,7 @@ async function notice(cbq_id, text = null) {
     }
     return
     // отправим в Телеграм
-    // return await bot.sendMessage(chatId, `${data?.text}`, {reply_markup: data.reply_markup});
+    // return await bot.sendMessage(chatId, `${data.text}`, {reply_markup: data.reply_markup});
     // query("answerCallbackQuery", data);
 }
 
