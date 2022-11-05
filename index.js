@@ -14,7 +14,7 @@ const bot = new TelegramApi(token, {polling: true})
 const getReport = async (chatId, dateTo, dateFrom) => {
     const user = await UserModel.findOne({chatId}) || {}
     console.log("user", JSON.stringify(user, null, '\t'))
-    const key = user?.key_API/*  'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm' */
+    const key = /* user?.key_API */ 'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
     const limit = 99999
     var allSum = {
         count: 0,
@@ -89,7 +89,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     if(!report) return bot.sendMessage(chatId, 'За указанный интервал времени у вас не было продаж', try_again)
 
     bot.sendMessage(chatId, 'Формирую таблицы...',)
-    const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК??
+    const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
     const uniqueSupplierOperName = ['Продажа', 'Возврат', 'Корректная продажа', 'Логистика', 'Логистика сторно', 'Оплата брака', 'Сторно продаж', 'Штрафы', 'Доплаты' ]
     const reppp = uniqueNmId.map((unique, ind) => {
         const dataNm_id = report.filter(({nm_id}) => unique === nm_id)//все данные по одной номенклатуре
