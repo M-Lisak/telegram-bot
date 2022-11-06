@@ -88,8 +88,12 @@ const getReport = async (chatId, dateTo, dateFrom) => {
 
     if(!report) return bot.sendMessage(chatId, 'За указанный интервал времени у вас не было продаж', try_again)
 
-    bot.sendMessage(chatId, 'Формирую таблицы...',)
     const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
+    
+    if(!uniqueNmId.length) return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
+
+    bot.sendMessage(chatId, 'Формирую таблицы...')
+
     const uniqueSupplierOperName = ['Продажа', 'Возврат', 'Корректная продажа', 'Логистика', 'Логистика сторно', 'Оплата брака', 'Сторно продаж', 'Штрафы', 'Доплаты' ]
     const reppp = uniqueNmId.map((unique, ind) => {
         const dataNm_id = report.filter(({nm_id}) => unique === nm_id)//все данные по одной номенклатуре
@@ -212,26 +216,26 @@ const getReport = async (chatId, dateTo, dateFrom) => {
             {v: dataNm_id[0].sa_name, t: 's', s: {fill: {fgColor: { rgb: '262626' }},  font: {color: { rgb: 'ffffff' }}, alignment: { horizontal: 'left' }}},
 
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
-            {v: Math.floor(0), t: 'n', s: { font: { bold: true }, alignment: { horizontal: 'center' } }},
-            {v: Math.floor(0), t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: 0, t: 'n', s: { font: { bold: true }, alignment: { horizontal: 'center' } }, f: `ROUND(K${ind + 4}-AS${ind + 4}-AR${ind + 4}-AT${ind + 4};0)`},
+            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR((IFERROR(((O${ind + 4}/Q${ind + 4}*(Q${ind + 4}-AO${ind + 4})));"0")-IFERROR(((Y${ind + 4}/Q${ind + 4}*(Q${ind + 4}-AO${ind + 4})));"0")-IFERROR(((AY${ind + 4}/Q${ind + 4}*(Q${ind + 4}-AO${ind + 4})));"0"));"0")-AJ${ind + 4}+AX${ind + 4};0)`},
 
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
             {v: Math.floor(WBImplemented), t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
             {v: Math.floor(toBePaidMinusTheCommission), t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
-            {v: Math.floor(0), t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
+            {v: 0, t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }, f: `ROUND(N${ind + 4}-BL${ind + 4}-BN${ind + 4}+BP${ind + 4}+BR${ind + 4}-AJ${ind + 4}-AX${ind + 4};0)`},
             {v: P, t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
             {v: Q, t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
             {v: Math.floor(R), t: 'n', s: {fill: {fgColor: { rgb: 'eef6fc'}}, alignment: {horizontal: 'center'} }},
             
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
-            {v: Math.floor(0), t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }},
+            {v: 0, t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }, f: `ROUND(IFERROR((K${ind + 4}/Q${ind + 4});"0");0)`},
             {v: Math.floor(U), t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }},
             {v: Math.floor(V), t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }},
             {v: Math.ceil(W), t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }},
             {v: X, t: 'n', s: {fill: {fgColor: { rgb: 'ffffcc'}}, alignment: {horizontal: 'center'}, font: { bold: true } }},
-            {v: Math.floor(0), t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }, f: `ROUND(IFERROR(VLOOKUP(F${ind + 4};'ЗАПОЛНЕНИЕ'!A:B;2;0)*(Q${ind + 4}+AL${ind + 4});"");0)`},
             {v: Math.floor(Z), t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }, f: `ROUND(IFERROR(((100/(BD${ind + 4}-AO${ind + 4})*AC${ind + 4}));"0");0)`},
             
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
             {v: countReturn, t: 'n', s: {fill: {fgColor: { rgb: 'f7bfbf'}}, alignment: {horizontal: 'center'} }},
@@ -249,38 +253,38 @@ const getReport = async (chatId, dateTo, dateFrom) => {
             {v: summRejects, t: 'n', s: { alignment: { horizontal: 'center' } }},
             
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR(VLOOKUP(F${ind + 4};'ЗАПОЛНЕНИЕ'!A:C;3;0);"0");0)`},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR((AO${ind + 4}*T${ind + 4});"0");0)`},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR((AR${ind + 4}+AS${ind + 4}+AT${ind + 4});"");0)`},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR((AO${ind + 4}*U${ind + 4});"");0)`},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR((((M${ind + 4}/Q${ind + 4})/100*7)*AO${ind + 4});"0");0)`},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' }}, f: `ROUND(IFERROR(((AV${ind + 4}/Q${ind + 4})*AO${ind + 4});"0");0)`},
 
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
             {v: Math.floor(AV), t: 'n', s: {fill: {fgColor: { rgb: 'e9f7ee'}}, alignment: {horizontal: 'center'} }},
             {v: additionalPayment, t: 'n', s: {fill: {fgColor: { rgb: 'e9f7ee'}}, alignment: {horizontal: 'center'} }},
-            {v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            { v: 0, t: 'n', s: { alignment: { horizontal: 'center' } }, f: `ROUND(IFERROR(('ИТОГИ'!$C$17/$Q$1*Q${ind + 4});"0");0)`},
             {v: Math.ceil(AY), t: 'n', s: { alignment: { horizontal: 'center' } }},
 
             {v: null, s: {fill: {fgColor: { rgb: 'd8d8d8'}}}},
             {v: Math.ceil(selling), t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v:  Math.ceil(toPay), t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v:  Math.ceil(BC), t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(toPay), t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(BC), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: ransoms, t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: numberCorrectSale, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: sellingCorrectSale, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: toPayCorrectSale, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(sellingCorrectSale), t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(toPayCorrectSale), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: numberReversal, t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: sellingReversal, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: toPayReversal, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(toPayReversal), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: countDelivery, t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v:  Math.ceil(summDelivery), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: countReturnLog, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: summReturnCost, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(summReturnCost), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: countStornoDelivery, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: summStornoDelivery, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(summStornoDelivery), t: 'n', s: { alignment: { horizontal: 'center' } }},
             {v: countStornoReturn, t: 'n', s: { alignment: { horizontal: 'center' } }},
-            {v: summStornoReturn, t: 'n', s: { alignment: { horizontal: 'center' } }},
+            {v: Math.ceil(summStornoReturn), t: 'n', s: { alignment: { horizontal: 'center' } }},
         ]
     })
 //если start_col больше чем reppp, надо поменять их местами
@@ -335,7 +339,7 @@ const buildXLSX = async (chatId, report, allSum, fillingSheet) => {
     const buffer = XLSX.write(wb, options)
     
     try {
-        await bot.sendDocument(chatId, buffer, {}, {filename: 'reports.xlsx', contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+        await bot.sendDocument(chatId, buffer, {}, {filename: `reports.xlsx`, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
     } catch (e) {
         console.error("Build Xlsx Error", e)
     }

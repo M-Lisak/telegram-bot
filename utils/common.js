@@ -76,26 +76,26 @@ const buidlHeader = (sum) => {
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
         //I J K
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
-        {v: sum.sumJ, s: { fill: { fgColor: { rgb: 'ffda66' } } , font: { italic: true, sz: 12 }, alignment: { horizontal: 'center' } } },
-        {v: sum.sumK, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true}, alignment: { horizontal: 'center' }}}, 
+        {v: sum.sumJ, s: { fill: { fgColor: { rgb: 'ffda66' } } , font: { italic: true, sz: 12 }, alignment: { horizontal: 'center' } }, f: "ROUND(SUM(J4:J9999)-C11-C12-C14;0)"},
+        {v: 0, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true}, alignment: { horizontal: 'center' }}, f: "ROUND(SUM(K4:K9999)-C11-C12-C14;0)"},
         //L M N O P Q R
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
         {v: Math.floor(sum.sumM), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: Math.floor(sum.sumN), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumO, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: sum.sumO, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(O4:O9999);0)'},
         {v: sum.sumP, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: sum.sumQ, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: Math.floor(sum.sumR), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         //S T U V W X Y Z AA
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
-        {v: Math.floor(sum.sumT/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: Math.floor(sum.sumT/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(AVERAGE(T4:T9999);0)'},
         {v: Math.floor(sum.sumU/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: Math.floor(sum.sumV/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: Math.floor(sum.sumW/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: Math.ceil(sum.sumW/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: sum.sumX, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumY, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: sum.sumY, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(Y4:Y9999);0)'},
         {v: Math.floor(sum.sumZ), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: Math.floor(sum.sumAA/sum.count || 0), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: 0, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(AVERAGE(AA4:AA9999);0)'},
         //AB AC AD AE
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
         {v: sum.sumAC, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
@@ -114,17 +114,17 @@ const buidlHeader = (sum) => {
         {v: sum.sumAM, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         //AN AO AP AQ AR AS AT
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
-        {v: sum.sumAO, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAP, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAQ, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAR, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAS, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAT, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: sum.sumAO, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AO4:AO9999);0)'},
+        {v: sum.sumAP, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AP4:AP9999);0)'},
+        {v: sum.sumAQ, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AQ4:AQ9999);0)'},
+        {v: sum.sumAR, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AR4:AR9999);0)'},
+        {v: sum.sumAS, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AS4:AS9999);0)'},
+        {v: sum.sumAT, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AT4:AT9999);0)'},
         //AU AV AW AX AY
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
         {v: Math.floor(sum.sumAV), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         {v: sum.sumAW, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumAX, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
+        {v: sum.sumAX, s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}, f: 'ROUND(SUM(AX4:AX9999);0)'},
         {v: Math.floor(sum.sumAY), s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {italic: true, sz: 12}, alignment: { horizontal: 'center' }}},
         //AZ BA BB BC BD BE BF BG BH BI BJ BK BL BM BN BO BP BQ BR
         {v: null, s: {fill: {fgColor: { rgb: 'ffda66' }}}},
@@ -134,8 +134,8 @@ const buidlHeader = (sum) => {
         {v: sum.sumBD, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
         {v: sum.sumBE, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
         {v: sum.sumBF, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumBG, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
-        {v: sum.sumBH, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
+        {v: Math.floor(sum.sumBG), s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
+        {v: Math.floor(sum.sumBH), s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
         {v: sum.sumBI, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
         {v: Math.floor(sum.sumBJ), s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
         {v: sum.sumBK, s: {fill: {fgColor: { rgb: '3f3f3f' }}, font: {italic: true, sz: 12, color: { rgb: 'ffffff' }}, alignment: { horizontal: 'center' }}},
@@ -329,16 +329,16 @@ const getStartCol = (ind, sum) => {
     const C14 = 0//////////////
     const C18 = 0//////////////
 
-    const C21 = (sum.sumY).toFixed(2)
+    const C21 = 0
     const C22 = (sum.sumQ).toFixed(2)
     const C23 = (sum.sumP).toFixed(2)
     const C24 = (sum.sumP - sum.sumQ).toFixed(2)
     const C25 = (sum.sumAD).toFixed(2)
     const C26 = (sum.sumAC).toFixed(2)
     const C27 = sum.sumAO
-    const C28 = sum.sumAQ
+    const C28 = 0
 
-    const C30 = (sum.sumT/sum.count || 0).toFixed(2)
+    const C30 = 0
     const C31 = (sum.sumV/sum.count || 0).toFixed(2)
     const C32 = (sum.sumU/sum.count || 0).toFixed(2)
 
@@ -441,7 +441,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 'К перечислению:',
-                {v: 0, t: "n", s: {font: {bold: true}, alignment: { horizontal: 'right' }}, f: 'C6-C7-C11-C10-C12-C14-C13'},
+                {v: 0, t: "n", s: {font: {bold: true}, alignment: { horizontal: 'right' }}, f: 'ROUND(C6-C7-C11-C10-C12-C14-C13;2)'},
                 'РУБ',
                 null
             ]
@@ -449,7 +449,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 'Недоприход:',
-                { v: 0, t: "n", s: {font: {bold: true}, alignment: { horizontal: 'right' }}, f: 'C16-C18'},
+                { v: 0, t: "n", s: {font: {bold: true}, alignment: { horizontal: 'right' }}, f: 'ROUND(C16-C18;2)'},
                 'РУБ',
                 null
             ]
@@ -473,7 +473,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'Товара продано на:', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
-                {v: C21, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C21, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!Y1"},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -521,7 +521,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'Самовыкупов ед.:', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
-                {v: C27, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C27, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!AO1"},
                 {v: 'ШТ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -529,7 +529,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'Расход на выкупы:', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
-                {v: C28, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C28, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!AQ1"},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -545,7 +545,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'Ср. прибыль с ед.:', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
-                {v: C30, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C30, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!T1"},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -593,7 +593,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'Расход на самовыкуп:', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
-                {v: C36, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C36, t: "n", s: {fill: {fgColor: { rgb: 'ffffcc' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!AQ1"},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -625,7 +625,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'ЧИСТАЯ ПРИБЫЛЬ:', s: {fill: {fgColor: { rgb: 'ffda66' }}}},
-                {v: C40, t: "n", s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C40, t: "n", s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: 'K1'},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
@@ -649,7 +649,7 @@ const getStartCol = (ind, sum) => {
             return [
                 {v: null, s: {fill: {fgColor: { rgb: 'CC66FF' }}}},
                 {v: 'ЧИСТАЯ ПРИБЫЛЬ ФАКТ:', s: {fill: {fgColor: { rgb: 'ffda66' }}}},
-                {v: C43, t: "n", s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {bold: true}, alignment: { horizontal: 'right' }}},
+                {v: C43, t: "n", s: {fill: {fgColor: { rgb: 'ffda66' }}, font: {bold: true}, alignment: { horizontal: 'right' }}, f: "'ИТОГИ'!J1"},
                 {v: 'РУБ', s: {fill: {fgColor: { rgb: 'ffffcc' }}}},
                 null
             ]
