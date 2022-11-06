@@ -375,8 +375,8 @@ const start = async () => {
     ])
 
     bot.on('message', async msg => {
-        const text = msg.text;
-        const chatId = msg.chat.id;
+        const text = msg.text
+        const chatId = msg.chat.id
 
         try {
             if (text === '/start') {
@@ -406,6 +406,7 @@ const start = async () => {
         const data = msg.data
         const chatId = msg.message.chat.id
         const cbq_id = msg.id
+        console.log("chatId", chatId)
         // console.log("finalReport", JSON.stringify(msg, null, '\t'))
 
         let params = data.split("_");
