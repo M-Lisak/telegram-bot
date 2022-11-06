@@ -381,7 +381,7 @@ const start = async () => {
         try {
             if (text === '/start') {
                 console.log("/start chatId", chatId)
-                const isUserCreate = await UserModel.findOne({chatId})
+                const isUserCreate = await UserModel.findOne({ where: { chatId: chatId } })
                 console.log('/start', JSON.stringify(isUserCreate, null, '\t'))
                 if(!isUserCreate) await UserModel.create({chatId})
 
@@ -389,12 +389,9 @@ const start = async () => {
                 return bot.sendMessage(chatId, 'Выберите', inline_buttons)
             }
             if (text === '/info') {
-            const info = sales.find(elem => Object.keys(elem) == 'Продажа')
+                const info = sales.find(elem => Object.keys(elem) == 'Продажа')
 
-            console.log("info", info)
-               
-                // const user = await UserModel.findOne({chatId})
-                // return bot.sendMessage(chatId, `Тебя зовут ${msg.from.first_name} ${msg.from.last_name}, в игре у тебя правильных ответов ${user.right}, неправильных ${user.wrong}, API ${user.key_API}`);
+                console.log("info", info)
             }
             // return bot.sendMessage(chatId, 'Я тебя не понимаю, попробуй еще раз!)');
         } catch (e) {
@@ -457,6 +454,7 @@ const start = async () => {
         }
         if(data === 'auth') {
             let listenerReply
+            //{ where: { chatId: chatId } }
             const user = await UserModel.findOne({chatId})
 
             let contentMessage = await bot.sendMessage(chatId, 'Введите ключ для работы с API статистики x64', {
@@ -476,15 +474,6 @@ const start = async () => {
             bot.onReplyToMessage(contentMessage.chat.id, contentMessage.message_id, listenerReply)
             return 
         }
-        // const user = await UserModel.findOne({chatId})
-        // if (data == chats[chatId]) {
-            // user.right += 1;
-            // await bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]}`, againOptions);
-        // } else {
-            // user.wrong += 1;
-            // await bot.sendMessage(chatId, `К сожалению ты не угадал, бот загадал цифру ${chats[chatId]}`, againOptions);
-        // }
-        // await user.save();
     })
 }
 
