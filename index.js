@@ -380,6 +380,7 @@ const start = async () => {
 
         try {
             if (text === '/start') {
+                console.log("/start chatId", chatId)
                 const isUserCreate = await UserModel.findOne({chatId})
                 console.log('/start', JSON.stringify(isUserCreate, null, '\t'))
                 if(!isUserCreate) await UserModel.create({chatId})
