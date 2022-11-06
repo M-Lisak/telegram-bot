@@ -12,7 +12,7 @@ const token = '5742477796:AAEPuZBxroVV1pI-16NjIqZdYXr2yTed9ps'
 const bot = new TelegramApi(token, {polling: true})
 
 const getReport = async (chatId, dateTo, dateFrom) => {
-    const user = await UserModel.findOne({chatId}) || {}
+    const user = await UserModel.findOne({ where: { chatId: `${chatId}` } }) || {}
     console.log("user", JSON.stringify(user, null, '\t'))
     const key = user.key_API //'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
     const limit = 99999
@@ -455,7 +455,7 @@ const start = async () => {
         if(data === 'auth') {
             let listenerReply
             //{ where: { chatId: chatId } }
-            const user = await UserModel.findOne({chatId})
+            const user = await UserModel.findOne({ where: { chatId: `${chatId}` } })
 
             let contentMessage = await bot.sendMessage(chatId, 'Введите ключ для работы с API статистики x64', {
                 'reply_markup': {
