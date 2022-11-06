@@ -381,6 +381,7 @@ const start = async () => {
         try {
             if (text === '/start') {
                 const isUserCreate = await UserModel.findOne({chatId})
+                console.log('/start', JSON.stringify(isUserCreate, null, '\t'))
                 if(!isUserCreate) await UserModel.create({chatId})
 
                 await bot.sendMessage(chatId, `Добро пожаловать в телеграм бот!`);
