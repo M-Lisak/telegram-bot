@@ -91,11 +91,13 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     console.log("get Report success", report.length)
 
     if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
-    console.log("report", JSON.stringify(report, null, '\t'))
 
     const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
     console.log("формирование уникальных номенклатур success", uniqueNmId.length)
-    if(!uniqueNmId.length) return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
+    if(!uniqueNmId.length){
+        console.log("report", JSON.stringify(report, null, '\t'))
+        return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
+    }
 
     bot.sendMessage(chatId, 'Формирую таблицы')
 
