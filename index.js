@@ -4,6 +4,7 @@ const sequelize = require('./db');
 const UserModel = require('./models');
 const Api = require('./apis');
 
+const moment = require('moment')
 var XLSX = require('xlsx-js-style');
 
 const { getSelling, itemCheck, getToPay, getQuantity, getCountDelivery, getSummDelivery, getCountReturn, getSummReturnCost, getAdditionalPayment, getSummPenalties, buidlHeader, getStartCol, getRange, getCols, getRows } = require('./utils/common');
@@ -13,7 +14,7 @@ const bot = new TelegramApi(token, {polling: true})
 
 const getReport = async (chatId, dateTo, dateFrom) => {
     const user = await UserModel.findOne({ where: { chatId: `${chatId}` } }) || {}
-    console.log("user", JSON.stringify(user, null, '\t'))
+    // console.log("user", JSON.stringify(user, null, '\t'))
     const key = user.key_API //'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
     const limit = 99999
     var allSum = {
@@ -77,19 +78,20 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     if(!dateTo || !dateFrom) return bot.sendMessage(chatId, 'Выберите время', select_date)
 
     await bot.sendMessage(chatId, `Скачиваю отчёт...`)
-
+    console.log("get Report", dateFrom, dateTo)
     var report
     try {
         report = await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo })
     } catch (error) {
-        console.error('ERROR FETCH Report', error)
+        console.error('ERROR FETCH Report', error.response)
         return bot.sendMessage(chatId, 'Ошибка получения отчёта от сервисов WB', try_again)
     }
+    console.log("get Report success", report.length)
 
     if(!report) return bot.sendMessage(chatId, 'За указанный интервал времени у вас не было продаж', try_again)
 
     const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
-    
+    console.log("формирование уникальных номенклатур success", uniqueNmId.length)
     if(!uniqueNmId.length) return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
 
     bot.sendMessage(chatId, 'Формирую таблицы...')
@@ -313,35 +315,36 @@ const getReport = async (chatId, dateTo, dateFrom) => {
 }
 
 const buildXLSX = async (chatId, report, allSum, fillingSheet) => {
-    const header = buidlHeader(allSum)
-    const header2 = [{v: 'ВСТАВИТЬ ЦЕНУ И ВЫКУП', s: {fill: {fgColor: { rgb: 'CC66FF' }}}}]
-    const range = getRange()
-    const colsWidth = getCols()
-    const rowsHeigth = getRows()
-    const options = { cellStyles: true, type: 'buffer' }
-    
-    const wb = XLSX.utils.book_new()
-
-    const ws = XLSX.utils.aoa_to_sheet([...header, ...report])
-    ws['!cols'] = colsWidth
-    ws['!merges'] = range
-    ws['!rows'] = rowsHeigth
-
-
-    const ws2 = XLSX.utils.aoa_to_sheet([header2, ...fillingSheet])
-    ws2['!cols'] = [{ wch: 25 }, { wch: 18 }]
-    ws2['!merges'] = [{ s: {c: 0, r: 0}, e: {c: 2, r: 0} }]
-    
-    XLSX.utils.book_append_sheet(wb, ws, "ИТОГИ")
-    XLSX.utils.book_append_sheet(wb, ws2, "ЗАПОЛНЕНИЕ")
-    
-    // const buffer = XLSX.write(wb, options)
-    const buffer = XLSX.write(wb, options)
-    
+    console.log("buildXLSX")
     try {
+        const header = buidlHeader(allSum)
+        const header2 = [{v: 'ВСТАВИТЬ ЦЕНУ И ВЫКУП', s: {fill: {fgColor: { rgb: 'CC66FF' }}}}]
+        const range = getRange()
+        const colsWidth = getCols()
+        const rowsHeigth = getRows()
+        const options = { cellStyles: true, type: 'buffer' }
+
+        const wb = XLSX.utils.book_new()
+
+        const ws = XLSX.utils.aoa_to_sheet([...header, ...report])
+        ws['!cols'] = colsWidth
+        ws['!merges'] = range
+        ws['!rows'] = rowsHeigth
+
+
+        const ws2 = XLSX.utils.aoa_to_sheet([header2, ...fillingSheet])
+        ws2['!cols'] = [{ wch: 25 }, { wch: 18 }]
+        ws2['!merges'] = [{ s: {c: 0, r: 0}, e: {c: 2, r: 0} }]
+        
+        XLSX.utils.book_append_sheet(wb, ws, "ИТОГИ")
+        XLSX.utils.book_append_sheet(wb, ws2, "ЗАПОЛНЕНИЕ")
+        
+        // const buffer = XLSX.write(wb, options)
+        const buffer = XLSX.write(wb, options)
+
         await bot.sendDocument(chatId, buffer, {}, {filename: `reports.xlsx`, contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
     } catch (e) {
-        console.error("Build Xlsx Error", e)
+        console.error("Build Xlsx Error", /* e */)
     }
 
 
@@ -364,7 +367,7 @@ const start = async () => {
         await sequelize.authenticate()
         await sequelize.sync()
     } catch (e) {
-        console.log('Подключение к бд сломалось', e)
+        console.log('Подключение к бд сломалось', /* e */)
     }
 
     bot.setMyCommands([
@@ -386,7 +389,7 @@ const start = async () => {
                 if(!isUserCreate) await UserModel.create({chatId})
 
                 await bot.sendMessage(chatId, `Добро пожаловать в телеграм бот!`);
-                return bot.sendMessage(chatId, 'Выберите', inline_buttons)
+                return bot.sendMessage(chatId, 'Меню', inline_buttons)
             }
             if (text === '/info') {
                 const info = sales.find(elem => Object.keys(elem) == 'Продажа')
@@ -395,7 +398,7 @@ const start = async () => {
             }
             // return bot.sendMessage(chatId, 'Я тебя не понимаю, попробуй еще раз!)');
         } catch (e) {
-            console.log("START ERROR", e)
+            console.log("START ERROR", /* e */)
             return bot.sendMessage(chatId, 'Произошла какая то ошибочка!)');
         }
 
@@ -405,47 +408,43 @@ const start = async () => {
         const data = msg.data
         const chatId = msg.message.chat.id
         const cbq_id = msg.id
-        console.log("chatId", chatId)
         // console.log("finalReport", JSON.stringify(msg, null, '\t'))
 
         let params = data.split("_");
 
         if (params[0] === "cal") {
             // выведем календарь на экран по переданным параметрам
-            viewCal(params[1], params[2], chatId, cbq_id, msg.message.message_id);
+            viewCal(params[1], params[2], chatId, cbq_id, msg.message.message_id, params[3]);
         }
-
-        else if (params[0] === "info") {
-            // выведем информацию
-            notice(cbq_id, params[1])
-            const dateTo = new Date()
-            const dateFrom = new Date (params[1])
-            // console.log("getTimezoneOffset()", dateTo.getTimezoneOffset())
-            // console.log("dateTo", dateTo)
-            // console.log("dateFrom", dateFrom)
-            // return
+        else if (params[0] === "info1") {
+            const date = moment(params[1]).toDate()
+            const year = date.getFullYear()
+            const month = date.getMonth()
+            viewCal(year, month, chatId, cbq_id, msg.message.message_id, moment(date).format('YYYY-MM-DD'));
+        } else if(params[0] === "info2") {
+            if(!params[1] || !params[2]) return console.log("ERROR select date") || await bot.sendMessage(chatId, `Ошибка выбора даты, начните заново`, select_date)
+            const dateFrom = params[1]
+            const dateTo = params[2]
             return getReport(chatId, dateTo, dateFrom)
-        } else {
-            // заглушим просто запрос
-            notice(cbq_id, "This is notice for bot");
         }
 
         if(data === 'getReport') {
-            return bot.sendMessage(chatId, `Выберите время, за которое нужен отчёт`, select_date)
+            return await bot.sendMessage(chatId, `Выберите время, за которое нужен отчёт`, select_date)
         }
         if(data === 'getReportDay') {
-            const dateTo = new Date()
-            const dateFrom = new Date(dateTo - 86400000)
+            const dateTo = moment().utcOffset(0, true).startOf('day').toDate()
+            const dateFrom = moment().subtract(1,'d').utcOffset(0, true).startOf('day').toDate()
             return getReport(chatId, dateTo, dateFrom)
         }
         if(data === 'getReportWeek') {
-            const dateTo = new Date()
-            const dateFrom = new Date(dateTo - 604800000)
+            const dateTo = moment().utcOffset(0, true).startOf('day').toDate()
+            const dateFrom = moment().subtract(6,'d').utcOffset(0, true).startOf('day').toDate()
             return getReport(chatId, dateTo, dateFrom)
         }
         if(data === 'getReportMonth') {
-            const dateTo = new Date()
-            const dateFrom = new Date(dateTo - 2592000000)
+            const dateTo = moment().utcOffset(0, true).startOf('day').toDate()
+            const dateFrom = moment().subtract(1, 'months').utcOffset(0, true).startOf('day').toDate()
+
             return getReport(chatId, dateTo, dateFrom)
         }
         if(data === 'getReportInputDate') {
@@ -474,10 +473,11 @@ const start = async () => {
             bot.onReplyToMessage(contentMessage.chat.id, contentMessage.message_id, listenerReply)
             return 
         }
+        return 
     })
 }
 
-async function viewCal(year, month, chatId, cbq_id = null, message_id = null) {
+async function viewCal(year, month, chatId, cbq_id = null, message_id = null, dateFrom = null) {
     // получаем массив дней месяца
     let dayLines = getDays(year, month);
     // определим переданную дату
@@ -494,15 +494,15 @@ async function viewCal(year, month, chatId, cbq_id = null, message_id = null) {
     buttons.push([
       {
         text: "<<<",
-        callback_data: "cal_" + prevMonthDate.getFullYear() + "_" + prevMonthDate.getMonth()
+        callback_data: dateFrom ? `cal_${prevMonthDate.getFullYear() + "_" + prevMonthDate.getMonth()}_${dateFrom}` : "cal_" + prevMonthDate.getFullYear() + "_" + prevMonthDate.getMonth()
       },
-      {
-        text: current_info,
-        callback_data: "info_" + current_info
-      },
+    //   {
+    //     text: current_info,
+    //     callback_data: "info_" + current_info
+    //   },
       {
         text: ">>>",
-        callback_data: "cal_" + nextMonthDate.getFullYear() + "_" + nextMonthDate.getMonth()
+        callback_data: dateFrom ? `cal_${nextMonthDate.getFullYear() + "_" + nextMonthDate.getMonth()}_${dateFrom}` : "cal_" + nextMonthDate.getFullYear() + "_" + nextMonthDate.getMonth()
       }
     ]);
     // переберем дни
@@ -515,7 +515,8 @@ async function viewCal(year, month, chatId, cbq_id = null, message_id = null) {
         buttons[buttons.length - 1].push({
           text: day,
           callback_data: day > 0
-            ? "info_" + current_info + "-" + setBeforeZero(day)
+            // ? "info1_" + current_info + "-" + setBeforeZero(day)
+            ? (dateFrom ? (`info2_${dateFrom}_${current_info}-${setBeforeZero(day)}`) : ("info1_"+ current_info + "-" + setBeforeZero(day)))
             : "inline"
         });
       });
@@ -523,19 +524,20 @@ async function viewCal(year, month, chatId, cbq_id = null, message_id = null) {
     // готовим данные
     let data = {
       chat_id: chatId,
-      text: "Календарь:\n\n" + currentMonthDate.toLocaleString('ru', {month: 'long', year: 'numeric'}),
+      text: "Календарь:\n\n" + currentMonthDate.toLocaleString('ru', {month: 'long', year: 'numeric'}) + (dateFrom ? ' Выберите конец периода' : ' Выберите начало периода'),
       parse_mode: "html",
       reply_markup: JSON.stringify({inline_keyboard: buttons})
     };
     // проверим как отправлять: как новое или замена содержимого
     if (message_id !== null) {
-      // гасим запрос
-    //   notice(cbq_id);
-      // добавим message_id
       data.message_id = message_id;
       // направим в Телеграм на изменение сообщения
-      return await bot.editMessageText(data.text, {chat_id: chatId, message_id: message_id, reply_markup: data.reply_markup} 
-      )
+      //нужно отрабатывать этот вариант при выборе двух дат
+      try {
+            return await bot.editMessageText(data.text, {chat_id: chatId, message_id: message_id, reply_markup: data.reply_markup})
+      } catch (error) {
+        console.log('error edit message text',)
+      }
     } else {
       // направим сообщение в чат
       return await  bot.sendMessage(chatId, `${data.text}`, {reply_markup: data.reply_markup});
@@ -581,22 +583,6 @@ function getNumDayOfWeek(date) {
     let day = date.getDay();
     // вернем на 1 меньше [0 - вск]
     return (day === 0) ? 6 : day - 1;
-}
-
-async function notice(cbq_id, text = null) {
-    // определим данные
-    let data = {
-      callback_query_id: cbq_id,
-      alert: false,
-    };
-    // если есть текст то добавим
-    if (text !== null) {
-      data.text = text;
-    }
-    return
-    // отправим в Телеграм
-    // return await bot.sendMessage(chatId, `${data.text}`, {reply_markup: data.reply_markup});
-    // query("answerCallbackQuery", data);
 }
 
 function setBeforeZero(num) {
