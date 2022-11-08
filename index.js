@@ -17,7 +17,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     // console.log("user", JSON.stringify(user, null, '\t'))
     const key = user.key_API //'MDQ1YzEzOWQtNzliMy00NGRlLWEzNDYtMWJiZmZhMzIyYmFm'
     const limit = 99999
-    var allSum = {
+    const allSum = {
         count: 0,
         sumJ: 0,//
         sumK: 0,//
@@ -79,33 +79,57 @@ const getReport = async (chatId, dateTo, dateFrom) => {
 
     await bot.sendMessage(chatId, `Скачиваю отчёт за ${moment(dateFrom).format('YYYY-MM-DD')}   ${moment(dateTo).format('YYYY-MM-DD')}`)
     console.log("get Report", dateFrom, dateTo)
-    var report
-    var uniqueNmId
     try {
-        report = await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo })
+        await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo }).then(async (data) => {
+            
+            if(!data.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
+        
+            const uniqueNmId = await data.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]
+            console.log("формирование уникальных номенклатур success", uniqueNmId.length)
 
-        console.log("get Report success", report.length)
-    
-        if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
-    
-        uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
-        console.log("формирование уникальных номенклатур success", uniqueNmId.length)
-        if(!uniqueNmId.length){
-            console.log("report", JSON.stringify(report, null, '\t'))
-            return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
-        }
+            if(!uniqueNmId.length){
+                console.log("!uniqueNmId.length", JSON.stringify(data.length, null, '\t'))
+                return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
+            }
+            console.log("отправляю сообщение боту")
+            await bot.sendMessage(chatId, 'Формирую таблицы')
+            console.log("отправил сообщение боту success")
+            const report = getReppp(uniqueNmId, data, allSum)
+            console.log("getReppp success", report.length)
+            //если start_col больше чем reppp, надо поменять их местами
+            const finalReport = report.map((item, ind) => {
+                const start_col = getStartCol(ind, allSum)
+        
+                return [...start_col, ...item]
+            })
 
-        await bot.sendMessage(chatId, 'Формирую таблицы')
+            const fillingSheet = uniqueNmId.map((unique) => {
+                return [
+                    {v: unique, t: 'n', s: {fill: {fgColor: { rgb: '424242'}}, alignment: {horizontal: 'center'}, font: {color: { rgb: 'ffffff'}} }},
+                    {v: null, t: 'n', s: {fill: {fgColor: { rgb: '424242'}}, alignment: {horizontal: 'center'}, font: {color: { rgb: 'ffffff'}} }},
+                    {v: null, t: 'n', s: {fill: {fgColor: { rgb: 'ccecff'}}, alignment: {horizontal: 'center'} }},
+                ]
+            })
+
+
+            await buildXLSX(chatId, finalReport, allSum, fillingSheet).then(res => {
+                return bot.sendMessage(chatId, 'Меню', get_report_button)
+            })
+
+        })
+        
     } catch (error) {
-        const status = error.response.status
-        console.error('ERROR FETCH Report', error.response, status)
-        const statusText = error.response.statusText
+        console.error('ERROR FETCH Report', error.response)
+        const statusText = error.response ? error.response.statusText : 'неизвестная ошибка'
         return bot.sendMessage(chatId, `Ошибка получения отчёта от сервисов WB: ${statusText}`, try_again)
     }
+    // console.log("REEEEEPP", JSON.stringify(reppp, null, '\t'))
+}
 
 
+const getReppp = (uniqueNmId, report, allSum) => {
     const uniqueSupplierOperName = ['Продажа', 'Возврат', 'Корректная продажа', 'Логистика', 'Логистика сторно', 'Оплата брака', 'Сторно продаж', 'Штрафы', 'Доплаты' ]
-    const reppp = uniqueNmId.map((unique, ind) => {
+    return uniqueNmId.map((unique, ind) => {
         const dataNm_id = report.filter(({nm_id}) => unique === nm_id)//все данные по одной номенклатуре
         //формируем данные по массиву uniqueSupplierOperName
         const calculationsData = uniqueSupplierOperName.map((uniqueOperName) => ({
@@ -297,33 +321,9 @@ const getReport = async (chatId, dateTo, dateFrom) => {
             {v: Math.ceil(summStornoReturn), t: 'n', s: { alignment: { horizontal: 'center' } }},
         ]
     })
-//если start_col больше чем reppp, надо поменять их местами
-    const finalReport = reppp.map((item, ind) => {
-        const start_col = getStartCol(ind, allSum)
-
-        return [...start_col, ...item]
-    })
-
-    const fillingSheet = uniqueNmId.map((unique) => {
-        return [
-            {v: unique, t: 'n', s: {fill: {fgColor: { rgb: '424242'}}, alignment: {horizontal: 'center'}, font: {color: { rgb: 'ffffff'}} }},
-            {v: null, t: 'n', s: {fill: {fgColor: { rgb: '424242'}}, alignment: {horizontal: 'center'}, font: {color: { rgb: 'ffffff'}} }},
-            {v: null, t: 'n', s: {fill: {fgColor: { rgb: 'ccecff'}}, alignment: {horizontal: 'center'} }},
-        ]
-    })
-
-    // console.log("finalReport", JSON.stringify(finalReport, null, '\t'))
-    
-
-    await buildXLSX(chatId, finalReport, allSum, fillingSheet)
-
-    return await bot.sendMessage(chatId, 'Меню', get_report_button)
-    // console.log("REEEEEPP", JSON.stringify(reppp, null, '\t'))
-
 }
 
 const buildXLSX = async (chatId, report, allSum, fillingSheet) => {
-    console.log("buildXLSX")
     try {
         const header = buidlHeader(allSum)
         const header2 = [{v: 'ВСТАВИТЬ ЦЕНУ И ВЫКУП', s: {fill: {fgColor: { rgb: 'CC66FF' }}}}]
