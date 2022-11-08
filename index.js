@@ -77,7 +77,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     if(!key) return bot.sendMessage(chatId, 'Чтобы получить отчёт, нужно авторизоваться', auth_inline)
     if(!dateTo || !dateFrom) return bot.sendMessage(chatId, 'Выберите время', select_date)
 
-    await bot.sendMessage(chatId, `Скачиваю отчёт...`)
+    await bot.sendMessage(chatId, `Скачиваю отчёт за ${dateFrom}-${dateTo}`)
     console.log("get Report", dateFrom, dateTo)
     var report
     try {
@@ -88,13 +88,13 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     }
     console.log("get Report success", report.length)
 
-    if(!report) return bot.sendMessage(chatId, 'За указанный интервал времени у вас не было продаж', try_again)
+    if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
 
     const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
     console.log("формирование уникальных номенклатур success", uniqueNmId.length)
     if(!uniqueNmId.length) return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
 
-    bot.sendMessage(chatId, 'Формирую таблицы...')
+    bot.sendMessage(chatId, 'Формирую таблицы')
 
     const uniqueSupplierOperName = ['Продажа', 'Возврат', 'Корректная продажа', 'Логистика', 'Логистика сторно', 'Оплата брака', 'Сторно продаж', 'Штрафы', 'Доплаты' ]
     const reppp = uniqueNmId.map((unique, ind) => {
