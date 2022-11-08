@@ -77,7 +77,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     if(!key) return bot.sendMessage(chatId, 'Чтобы получить отчёт, нужно авторизоваться', auth_inline)
     if(!dateTo || !dateFrom) return bot.sendMessage(chatId, 'Выберите время', select_date)
 
-    await bot.sendMessage(chatId, `Скачиваю отчёт за ${moment(dateFrom).format('YYYY-MM-DD')}-${moment(dateTo).format('YYYY-MM-DD')}`)
+    await bot.sendMessage(chatId, `Скачиваю отчёт за ${moment(dateFrom).format('YYYY-MM-DD')}   ${moment(dateTo).format('YYYY-MM-DD')}`)
     console.log("get Report", dateFrom, dateTo)
     var report
     try {
