@@ -83,12 +83,15 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     try {
         report = await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo })
     } catch (error) {
-        console.error('ERROR FETCH Report', error.response)
-        return bot.sendMessage(chatId, 'Ошибка получения отчёта от сервисов WB', try_again)
+        const status = error.response.status
+        console.error('ERROR FETCH Report', error.response, status)
+        const statusText = error.response.statusText
+        return bot.sendMessage(chatId, `Ошибка получения отчёта от сервисов WB: ${statusText}`, try_again)
     }
     console.log("get Report success", report.length)
 
     if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
+    console.log("report", JSON.stringify(report, null, '\t'))
 
     const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
     console.log("формирование уникальных номенклатур success", uniqueNmId.length)
