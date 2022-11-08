@@ -80,6 +80,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     await bot.sendMessage(chatId, `Скачиваю отчёт за ${moment(dateFrom).format('YYYY-MM-DD')}   ${moment(dateTo).format('YYYY-MM-DD')}`)
     console.log("get Report", dateFrom, dateTo)
     var report
+    var uniqueNmId
     try {
         report = await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo })
 
@@ -87,7 +88,7 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     
         if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
     
-        const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
+        uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
         console.log("формирование уникальных номенклатур success", uniqueNmId.length)
         if(!uniqueNmId.length){
             console.log("report", JSON.stringify(report, null, '\t'))
