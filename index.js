@@ -82,24 +82,26 @@ const getReport = async (chatId, dateTo, dateFrom) => {
     var report
     try {
         report = await Api.reports.reportDetailByPeriod({ key, limit, dateFrom, dateTo })
+
+        console.log("get Report success", report.length)
+    
+        if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
+    
+        const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
+        console.log("формирование уникальных номенклатур success", uniqueNmId.length)
+        if(!uniqueNmId.length){
+            console.log("report", JSON.stringify(report, null, '\t'))
+            return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
+        }
+
+        await bot.sendMessage(chatId, 'Формирую таблицы')
     } catch (error) {
         const status = error.response.status
         console.error('ERROR FETCH Report', error.response, status)
         const statusText = error.response.statusText
         return bot.sendMessage(chatId, `Ошибка получения отчёта от сервисов WB: ${statusText}`, try_again)
     }
-    console.log("get Report success", report.length)
 
-    if(!report.length) return bot.sendMessage(chatId, `За указанный интервал времени у вас не было продаж`, try_again)
-
-    const uniqueNmId = report.map(({nm_id}) => nm_id).filter((item) => itemCheck(item))//[23542398, 59349211, 34874389, ...]// нужен ещё артикул поставщика sa_name и ШК
-    console.log("формирование уникальных номенклатур success", uniqueNmId.length)
-    if(!uniqueNmId.length){
-        console.log("report", JSON.stringify(report, null, '\t'))
-        return bot.sendMessage(chatId, 'Нет ни одной записи за указанный период времени', try_again)
-    }
-
-    bot.sendMessage(chatId, 'Формирую таблицы')
 
     const uniqueSupplierOperName = ['Продажа', 'Возврат', 'Корректная продажа', 'Логистика', 'Логистика сторно', 'Оплата брака', 'Сторно продаж', 'Штрафы', 'Доплаты' ]
     const reppp = uniqueNmId.map((unique, ind) => {
